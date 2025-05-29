@@ -1,1 +1,0 @@
-import{a$ as s}from"./index-DPENBzsb.js";const e=async(a,i)=>await s.get({url:"/bpm/process-definition/get",params:{id:a,key:i}}),t=async a=>await s.get({url:"/bpm/process-definition/page",params:a}),p=async a=>await s.get({url:"/bpm/process-definition/list",params:a});export{e as a,p as b,t as g};

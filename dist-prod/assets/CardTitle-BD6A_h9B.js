@@ -1,1 +1,0 @@
-import{d as t,o as s,c as e,t as r,_ as p}from"./index-DPENBzsb.js";const i={class:"card-title"},o=p(t({__name:"CardTitle",props:{title:{type:String,required:!0}},setup:a=>(c,d)=>(s(),e("span",i,r(a.title),1))}),[["__scopeId","data-v-e4af26ac"]]);export{o as C};
