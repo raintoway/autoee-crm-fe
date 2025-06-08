@@ -30,6 +30,12 @@ export interface ClueVO {
   creatorName?: string // 创建人名称
   createTime: Date // 创建时间
   updateTime: Date // 更新时间
+  images: string[] // 图片
+  consultTime: Date // 咨询时间
+  operatorUserId: number // 所属运营
+  contact: string // 联系方式
+  customerUid: string // 客户UID
+  
 }
 
 // 查询线索列表

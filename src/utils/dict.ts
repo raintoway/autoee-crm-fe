@@ -217,6 +217,11 @@ export enum DICT_TYPE {
   CRM_PERMISSION_LEVEL = 'crm_permission_level', // CRM 数据权限的级别
   CRM_PRODUCT_UNIT = 'crm_product_unit', // CRM 产品单位
   CRM_FOLLOW_UP_TYPE = 'crm_follow_up_type', // CRM 跟进方式
+  // ========== CRM - cq ==========
+  CRM_TRIP_TYPE = 'crm_trip_type', // CRM 行程类型
+  CRM_COST_TYPE = 'crm_cost_type', // CRM 费用类型
+  CRM_TRIP_STATUS = 'crm_trip_status', // CRM 行程状态
+  CRM_PAYMENT_STATUS = 'crm_payment_status', // CRM 付款状态
 
   // ========== ERP - 企业资源计划模块  ==========
   ERP_AUDIT_STATUS = 'erp_audit_status', // ERP 审批状态

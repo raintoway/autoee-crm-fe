@@ -44,6 +44,18 @@ export interface ContractVO {
       totalPrice: number
     }
   ]
+  trips?: [
+    {
+      id: number
+      tripInfo: string
+      type: number
+      flightNo: string
+      startTime: Date
+      passengerNum: number
+      carModel: string
+      remark: string
+    }
+  ]
 }
 
 // 查询 CRM 合同列表

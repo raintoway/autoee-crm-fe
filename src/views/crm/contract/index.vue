@@ -1,5 +1,5 @@
 <template>
-  <doc-alert title="【合同】合同管理、合同提醒" url="https://doc.iocoder.cn/crm/contract/" />
+  <doc-alert title="【订单】订单管理、订单提醒" url="https://doc.iocoder.cn/crm/contract/" />
   <doc-alert title="【通用】数据权限" url="https://doc.iocoder.cn/crm/permission/" />
 
   <ContentWrap>
@@ -11,21 +11,21 @@
       class="-mb-15px"
       label-width="68px"
     >
-      <el-form-item label="合同编号" prop="no">
+      <el-form-item label="订单编号" prop="no">
         <el-input
           v-model="queryParams.no"
           class="!w-240px"
           clearable
-          placeholder="请输入合同编号"
+          placeholder="请输入订单编号"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="合同名称" prop="name">
+      <el-form-item label="订单名称" prop="name">
         <el-input
           v-model="queryParams.name"
           class="!w-240px"
           clearable
-          placeholder="请输入合同名称"
+          placeholder="请输入订单名称"
           @keyup.enter="handleQuery"
         />
         <el-form-item label="客户" prop="customerId">
@@ -82,8 +82,8 @@
       <el-tab-pane label="下属负责的" name="3" />
     </el-tabs>
     <el-table v-loading="loading" :data="list" :show-overflow-tooltip="true" :stripe="true">
-      <el-table-column align="center" fixed="left" label="合同编号" prop="no" width="180" />
-      <el-table-column align="center" fixed="left" label="合同名称" prop="name" width="160">
+      <el-table-column align="center" fixed="left" label="订单编号" prop="no" width="180" />
+      <el-table-column align="center" fixed="left" label="订单名称" prop="name" width="160">
         <template #default="scope">
           <el-link :underline="false" type="primary" @click="openDetail(scope.row.id)">
             {{ scope.row.name }}
@@ -101,20 +101,20 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="商机名称" prop="businessName" width="130">
+      <el-table-column align="center" label="行程数" prop="tripCount" width="130">
         <template #default="scope">
           <el-link
             :underline="false"
             type="primary"
-            @click="openBusinessDetail(scope.row.businessId)"
+            @click="openTripDetail(scope.row.id)"
           >
-            {{ scope.row.businessName }}
+            {{ getTripCount(scope.row) }}
           </el-link>
         </template>
       </el-table-column>
       <el-table-column
         align="center"
-        label="合同金额（元）"
+        label="订单金额（元）"
         prop="totalPrice"
         width="140"
         :formatter="erpPriceTableColumnFormatter"
@@ -128,19 +128,19 @@
       />
       <el-table-column
         align="center"
-        label="合同开始时间"
+        label="订单开始时间"
         prop="startTime"
         width="120"
-        :formatter="dateFormatter2"
+        :formatter="dateFormatter"
       />
-      <el-table-column
+      <!-- <el-table-column
         align="center"
-        label="合同结束时间"
+        label="订单结束时间"
         prop="endTime"
         width="120"
         :formatter="dateFormatter2"
-      />
-      <el-table-column align="center" label="客户签约人" prop="contactName" width="130">
+      /> -->
+      <!-- <el-table-column align="center" label="客户签约人" prop="contactName" width="130">
         <template #default="scope">
           <el-link
             :underline="false"
@@ -151,9 +151,9 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="公司签约人" prop="signUserName" width="130" />
+      <el-table-column align="center" label="公司签约人" prop="signUserName" width="130" /> -->
       <el-table-column align="center" label="备注" prop="remark" width="200" />
-      <el-table-column
+      <!-- <el-table-column
         align="center"
         label="已回款金额（元）"
         prop="totalReceivablePrice"
@@ -170,14 +170,14 @@
         <template #default="scope">
           {{ erpPriceInputFormatter(scope.row.totalPrice - scope.row.totalReceivablePrice) }}
         </template>
-      </el-table-column>
-      <el-table-column
+      </el-table-column> -->
+      <!-- <el-table-column
         :formatter="dateFormatter"
         align="center"
         label="最后跟进时间"
         prop="contactLastTime"
         width="180px"
-      />
+      /> -->
       <el-table-column align="center" label="负责人" prop="ownerUserName" width="120" />
       <el-table-column align="center" label="所属部门" prop="ownerUserDeptName" width="100px" />
       <el-table-column
@@ -195,9 +195,19 @@
         width="180px"
       />
       <el-table-column align="center" label="创建人" prop="creatorName" width="120" />
-      <el-table-column align="center" fixed="right" label="合同状态" prop="auditStatus" width="120">
+      <el-table-column align="center" fixed="right" label="订单状态" prop="auditStatus" width="120">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.CRM_AUDIT_STATUS" :value="scope.row.auditStatus" />
+        </template>
+      </el-table-column>
+      <el-table-column align="center" fixed="right" label="订单状态" prop="tripStatus" width="120">
+        <template #default="scope">
+          <dict-tag :type="DICT_TYPE.CRM_TRIP_STATUS" :value="scope.row.tripStatus" />
+        </template>
+      </el-table-column>
+      <el-table-column align="center" fixed="right" label="付款状态" prop="paymentStatus" width="120">
+        <template #default="scope">
+          <dict-tag :type="DICT_TYPE.CRM_PAYMENT_STATUS" :value="scope.row.paymentStatus" />
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="250">
@@ -237,14 +247,14 @@
           >
             详情
           </el-button>
-          <el-button
+          <!-- <el-button
             v-hasPermi="['crm:contract:delete']"
             link
             type="danger"
             @click="handleDelete(scope.row.id)"
           >
             删除
-          </el-button>
+          </el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -291,6 +301,13 @@ const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
 const activeName = ref('1') // 列表 tab
 const customerList = ref<CustomerApi.CustomerVO[]>([]) // 客户列表
+
+
+// 计算行程数
+const getTripCount = (row: ContractApi.ContractVO) => {
+  return row.trips?.length || 0
+}
+
 
 /** tab 切换 */
 const handleTabClick = (tab: TabsPaneContext) => {
@@ -349,7 +366,7 @@ const handleExport = async () => {
     // 发起导出
     exportLoading.value = true
     const data = await ContractApi.exportContract(queryParams)
-    download.excel(data, '合同.xls')
+    download.excel(data, '订单.xls')
   } catch {
   } finally {
     exportLoading.value = false
@@ -369,7 +386,7 @@ const handleProcessDetail = (row: ContractApi.ContractVO) => {
   push({ name: 'BpmProcessInstanceDetail', query: { id: row.processInstanceId } })
 }
 
-/** 打开合同详情 */
+/** 打开订单详情 */
 const { push } = useRouter()
 const openDetail = (id: number) => {
   push({ name: 'CrmContractDetail', params: { id } })
@@ -388,6 +405,11 @@ const openContactDetail = (id: number) => {
 /** 打开商机详情 */
 const openBusinessDetail = (id: number) => {
   push({ name: 'CrmBusinessDetail', params: { id } })
+}
+
+/** 打开行程详情 */
+const openTripDetail = (id: number) => {
+  push({ name: 'CrmContractDetail', params: { id }, query: { activeName: 'trip' } })
 }
 
 /** 初始化 **/

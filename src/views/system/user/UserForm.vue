@@ -82,6 +82,13 @@
         </el-col>
       </el-row>
       <el-row>
+        <el-col :span="12">
+          <el-form-item label="微信号" prop="mobile">
+            <el-input v-model="formData.wechat" placeholder="请输入微信号" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
         <el-col :span="24">
           <el-form-item label="备注">
             <el-input v-model="formData.remark" placeholder="请输入内容" type="textarea" />
@@ -123,6 +130,7 @@ const formData = ref({
   password: '',
   sex: undefined,
   postIds: [],
+  wechat: '',
   remark: '',
   status: CommonStatusEnum.ENABLE,
   roleIds: []

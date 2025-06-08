@@ -1,4 +1,4 @@
-<!-- 合同详情页面组件-->
+<!-- 订单详情页面组件-->
 <template>
   <div>
     <ContractDetailsHeader v-loading="loading" :contract="contract">
@@ -11,15 +11,15 @@
       </el-button>
     </ContractDetailsHeader>
     <el-col>
-      <el-tabs>
-        <el-tab-pane label="跟进记录">
+      <el-tabs v-model="activeName">
+        <el-tab-pane label="跟进记录" name="followup">
           <FollowUpList
             v-if="contract.id"
             :biz-id="contract.id"
             :biz-type="BizTypeEnum.CRM_CONTRACT"/>
         </el-tab-pane>
 
-        <el-tab-pane label="回款">
+        <el-tab-pane label="回款" name="receivable">
           <ReceivablePlanList
             v-if="contract.id && contract.customerId"
             :contract-id="contract.id"
@@ -33,13 +33,16 @@
             :customer-id="contract.customerId"
           />
         </el-tab-pane>
-        <el-tab-pane label="基本信息">
+        <el-tab-pane label="基本信息" name="base">
           <ContractDetailsInfo v-if="contract.id" :contract="contract"/>
         </el-tab-pane>
-        <el-tab-pane label="产品">
+        <el-tab-pane label="产品" name="product">
           <ContractProductList :contract="contract"/>
         </el-tab-pane>
-        <el-tab-pane label="团队成员">
+        <el-tab-pane label="行程" name="trip">
+          <ContractTripList :contract="contract"/>
+        </el-tab-pane>
+        <el-tab-pane label="团队成员" name="team">
           <PermissionList
             ref="permissionListRef"
             :biz-id="contract.id!"
@@ -48,7 +51,7 @@
             @quit-team="close"
           />
         </el-tab-pane>
-        <el-tab-pane label="操作日志">
+        <el-tab-pane label="操作日志" name="operateLog">
           <OperateLogV2 :log-list="logList"/>
         </el-tab-pane>
       </el-tabs>
@@ -74,7 +77,7 @@ import PermissionList from '@/views/crm/permission/components/PermissionList.vue
 import FollowUpList from '@/views/crm/followup/index.vue'
 import ReceivableList from '@/views/crm/receivable/components/ReceivableList.vue'
 import ReceivablePlanList from '@/views/crm/receivable/plan/components/ReceivablePlanList.vue'
-
+import ContractTripList from '@/views/crm/contract/detail/ContractTripList.vue'
 defineOptions({name: 'CrmContractDetail'})
 const props = defineProps<{ id?: number }>()
 
@@ -82,12 +85,13 @@ const route = useRoute()
 const message = useMessage()
 const contractId = ref(0) // 编号
 const loading = ref(true) // 加载中
+const activeName = ref('base')
 // const contract = ref<ContractApi.ContractVO>({} as ContractApi.ContractVO) // 详情
 const contract = ref<ContractApi.ContractVO>({
   id: 0,
   customerId: 0,
   // 其他必要字段初始化
-} as ContractApi.ContractVO) // 初始化合同对象
+} as ContractApi.ContractVO) // 初始化订单对象
 const permissionListRef = ref<InstanceType<typeof PermissionList>>() // 团队成员列表 Ref
 
 /** 编辑 */
@@ -127,7 +131,7 @@ const createReceivable = (planData: any) => {
 }
 
 /** 转移 */
-const transferFormRef = ref<InstanceType<typeof CrmTransferForm>>() // 合同转移表单 ref
+const transferFormRef = ref<InstanceType<typeof CrmTransferForm>>() // 订单转移表单 ref
 const transferContract = () => {
   transferFormRef.value?.open(contract.value.id)
 }
@@ -143,12 +147,14 @@ const close = () => {
 onMounted(async () => {
   console.log("props.id=" + props.id)
   console.log("route.params.id=" + route.params.id)
+  console.log("route.query.activeName=" + route.query.activeName)
   const id = props.id || route.params.id
   if (!id) {
-    message.warning('参数错误，合同不能为空！')
+    message.warning('参数错误，订单不能为空！')
     close()
     return
   }
+  activeName.value = route.query.activeName || 'base' 
   contractId.value = id as unknown as number
   await getContractData()
 })
